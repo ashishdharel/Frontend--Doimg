@@ -1,10 +1,25 @@
 // frontend/src/App.js
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function App() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://47.129.53.171:5000/api/data');
+      setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,6 +28,7 @@ function App() {
       alert('Data added successfully!');
       setName('');
       setDescription('');
+      fetchData(); // Fetch updated data after adding
     } catch (error) {
       console.error('Error adding data:', error);
       alert('Error adding data');
@@ -45,6 +61,15 @@ function App() {
         <br />
         <button type="submit">Add Data</button>
       </form>
+
+      <h2>Stored Data:</h2>
+      <ul>
+        {data.map((item) => (
+          <li key={item.id}>
+            <strong>Name:</strong> {item.name}, <strong>Description:</strong> {item.description}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
