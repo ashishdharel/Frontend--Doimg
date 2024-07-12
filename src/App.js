@@ -1,62 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './App.css'; // Import your CSS file
 
 function App() {
-  const [data, setData] = useState([]);
+    const [inputData, setInputData] = useState('');
+    const [storedData, setStoredData] = useState([]);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+    useEffect(() => {
+        fetchData();
+    }, []);
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get('http://47.129.53.171:5000/api/data');
-      setData(response.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      alert('Error fetching data. See console for details.');
-    }
-  };
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/getdata`);
+            setStoredData(response.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
-  const handleSubmit = async (name, description) => {
-    try {
-      await axios.post('http://47.129.53.171:5000/api/data', { name, description });
-      alert('Data added successfully!');
-      fetchData(); // Refresh data after adding
-    } catch (error) {
-      console.error('Error adding data:', error);
-      alert('Error adding data');
-    }
-  };
+    const handleInputChange = (e) => {
+        setInputData(e.target.value);
+    };
 
-  return (
-    <div className="App">
-      <h1>Fetch and Add Data Example</h1>
-
-      {/* Form to add data */}
-      <form onSubmit={(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const name = e.target.name.value;
-        const description = e.target.description.value;
-        handleSubmit(name, description);
-        e.target.reset();
-      }}>
-        <input type="text" name="name" placeholder="Name" required />
-        <input type="text" name="description" placeholder="Description" required />
-        <button type="submit">Add Data</button>
-      </form>
 
-      {/* Display fetched data */}
-      <h2>Stored Data:</h2>
-      <ul>
-        {data.map((item) => (
-          <li key={item.id}>
-            <strong>Name:</strong> {item.name}, <strong>Description:</strong> {item.description}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+        if (!inputData.trim()) {
+            console.log('Input is empty, skipping submit.');
+            return;
+        }
+
+        try {
+            await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/storedata`, { data: inputData });
+            setInputData('');
+            fetchData();
+        } catch (error) {
+            console.error('Error storing data:', error);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/deletedata/${id}`);
+            fetchData();
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    };
+
+    return (
+        <div className="app-container">
+            <h1>Store and Fetch Data Example</h1>
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    value={inputData}
+                    onChange={handleInputChange}
+                    placeholder="Enter data to store"
+                    className="input-field"
+                />
+                <button type="submit" className="store-button">Store Data</button>
+            </form>
+            <h2>Stored Data:</h2>
+            <div className="data-grid">
+                {storedData.map((item) => (
+                    <div key={item.id} className="data-item">
+                        <p>{item.data}</p>
+                        <button onClick={() => handleDelete(item.id)}>Delete</button>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 }
 
 export default App;
