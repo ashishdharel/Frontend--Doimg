@@ -62,7 +62,7 @@ function App() {
                 />
                 <button type="submit" className="store-button">Store Data</button>
             </form>
-            <h2>Stored Data:</h2>
+            <h2>Stored Dataa:</h2>
             <div className="data-grid">
                 {storedData.map((item) => (
                     <div key={item.id} className="data-item">
