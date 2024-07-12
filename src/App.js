@@ -35,7 +35,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Add Data to MySQL via React and Node.js</h1>
+      <h1>Add and Fetch Data from MySQL via React and Node.js</h1>
       <form onSubmit={handleSubmit}>
         <label>
           Name:
