@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function App() {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -20,14 +18,11 @@ function App() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (name, description) => {
     try {
       await axios.post('http://47.129.53.171:5000/api/data', { name, description });
       alert('Data added successfully!');
-      setName('');
-      setDescription('');
-      fetchData(); // Fetch updated data after adding
+      fetchData(); // Refresh data after adding
     } catch (error) {
       console.error('Error adding data:', error);
       alert('Error adding data');
@@ -36,31 +31,22 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Add and Fetch Data from MySQL via React and Node.js</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Name:
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <label>
-          Description:
-          <input
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-        </label>
-        <br />
+      <h1>Fetch and Add Data Example</h1>
+
+      {/* Form to add data */}
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        const name = e.target.name.value;
+        const description = e.target.description.value;
+        handleSubmit(name, description);
+        e.target.reset();
+      }}>
+        <input type="text" name="name" placeholder="Name" required />
+        <input type="text" name="description" placeholder="Description" required />
         <button type="submit">Add Data</button>
       </form>
 
+      {/* Display fetched data */}
       <h2>Stored Data:</h2>
       <ul>
         {data.map((item) => (
