@@ -9,7 +9,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/data', { name, description });
+      await axios.post('http://47.129.53.171/api/data', { name, description });
       alert('Data added successfully!');
       setName('');
       setDescription('');
