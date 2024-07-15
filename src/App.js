@@ -1,10 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css'; // Import your CSS file
 
 function App() {
-    const [data, setData] = useState('');
-    const [description, setDescription] = useState('');
+    const [inputData, setInputData] = useState('');
     const [storedData, setStoredData] = useState([]);
 
     useEffect(() => {
@@ -20,25 +20,21 @@ function App() {
         }
     };
 
-    const handleInputChange = (e, setter) => {
-        setter(e.target.value);
+    const handleInputChange = (e) => {
+        setInputData(e.target.value);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!data.trim() || !description.trim()) {
+        if (!inputData.trim()) {
             console.log('Input is empty, skipping submit.');
             return;
         }
 
         try {
-            await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/storedata`, {
-                data: data,
-                description: description
-            });
-            setData('');
-            setDescription('');
+            await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/storedata`, { data: inputData });
+            setInputData('');
             fetchData();
         } catch (error) {
             console.error('Error storing data:', error);
@@ -58,32 +54,20 @@ function App() {
         <div className="app-container">
             <h1>Store and Fetch Data Example</h1>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <input
-                        type="text"
-                        value={data}
-                        onChange={(e) => handleInputChange(e, setData)}
-                        placeholder="Enter data to store"
-                        className="input-field"
-                    />
-                </div>
-                <div>
-                    <input
-                        type="text"
-                        value={description}
-                        onChange={(e) => handleInputChange(e, setDescription)}
-                        placeholder="Enter description to data"
-                        className="input-field"
-                    />
-                </div>
+                <input
+                    type="text"
+                    value={inputData}
+                    onChange={handleInputChange}
+                    placeholder="Enter data to store"
+                    className="input-field"
+                />
                 <button type="submit" className="store-button">Store Data</button>
             </form>
             <h2>Stored Data:</h2>
             <div className="data-grid">
                 {storedData.map((item) => (
                     <div key={item.id} className="data-item">
-                        <p>Data: {item.data}</p>
-                        <p>Description: {item.description}</p>
+                        <p>{item.data}</p>
                         <button onClick={() => handleDelete(item.id)}>Delete</button>
                     </div>
                 ))}
@@ -93,4 +77,3 @@ function App() {
 }
 
 export default App;
-// why r u running
