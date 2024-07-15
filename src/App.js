@@ -3,8 +3,8 @@ import axios from 'axios';
 import './App.css'; // Import your CSS file
 
 function App() {
-    const [inputData, setInputData] = useState('');
-    const [inputDescription, setInputDescription] = useState('');
+    const [data, setData] = useState('');
+    const [description, setDescription] = useState('');
     const [storedData, setStoredData] = useState([]);
 
     useEffect(() => {
@@ -20,29 +20,25 @@ function App() {
         }
     };
 
-    const handleInputChange1 = (e) => {
-        setInputData(e.target.value);
-    };
-
-    const handleInputChange2 = (e) => {
-        setInputDescription(e.target.value);
+    const handleInputChange = (e, setter) => {
+        setter(e.target.value);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!inputData.trim() || !inputDescription.trim()) {
+        if (!data.trim() || !description.trim()) {
             console.log('Input is empty, skipping submit.');
             return;
         }
 
         try {
             await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/storedata`, {
-                data: inputData,
-                description: inputDescription
+                data: data,
+                description: description
             });
-            setInputData('');
-            setInputDescription('');
+            setData('');
+            setDescription('');
             fetchData();
         } catch (error) {
             console.error('Error storing data:', error);
@@ -65,8 +61,8 @@ function App() {
                 <div>
                     <input
                         type="text"
-                        value={inputData}
-                        onChange={handleInputChange1}
+                        value={data}
+                        onChange={(e) => handleInputChange(e, setData)}
                         placeholder="Enter data to store"
                         className="input-field"
                     />
@@ -74,8 +70,8 @@ function App() {
                 <div>
                     <input
                         type="text"
-                        value={inputDescription}
-                        onChange={handleInputChange2}
+                        value={description}
+                        onChange={(e) => handleInputChange(e, setDescription)}
                         placeholder="Enter description to data"
                         className="input-field"
                     />
