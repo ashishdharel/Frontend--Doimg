@@ -1,22 +1,28 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './App.css'; // Import your CSS file
+import './App.css'; // Import your CSS file 
 
 function App() {
     const [inputData, setInputData] = useState('');
     const [storedData, setStoredData] = useState([]);
+    const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
-        fetchData();
+        fetchData(); // Initial fetch when component mounts
+        const interval = setInterval(fetchData, 5000); // Fetch data every 10 seconds
+
+        return () => clearInterval(interval); // Clean up interval on component unmount
     }, []);
 
     const fetchData = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/getdata`);
             setStoredData(response.data);
+            setError('');
         } catch (error) {
             console.error('Error fetching data:', error);
+            setError('Failed to fetch data. Please try again later.');
         }
     };
 
@@ -28,25 +34,31 @@ function App() {
         e.preventDefault();
 
         if (!inputData.trim()) {
-            console.log('Input is empty, skipping submit.');
+            setError('Input is empty. Skipping submit.');
             return;
         }
 
         try {
             await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/storedata`, { data: inputData });
-            setInputData('');
-            fetchData();
+            setSuccessMessage('Data stored successfully');
+            setInputData(''); // Clear input field after successful submission
+            fetchData(); // Fetch updated data after submission
+            setError('');
         } catch (error) {
             console.error('Error storing data:', error);
+            setError('Failed to store data. Please try again later.');
         }
     };
 
     const handleDelete = async (id) => {
         try {
             await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/deletedata/${id}`);
-            fetchData();
+            setSuccessMessage('Data deleted successfully');
+            fetchData(); // Fetch updated data after deletion
+            setError('');
         } catch (error) {
             console.error('Error deleting data:', error);
+            setError('Failed to delete data. Please try again later.');
         }
     };
 
@@ -63,6 +75,8 @@ function App() {
                 />
                 <button type="submit" className="store-button">Store Data</button>
             </form>
+            {successMessage && <p className="success-message">{successMessage}</p>}
+            {error && <p className="error-message">{error}</p>}
             <h2>Stored Data:</h2>
             <div className="data-grid">
                 {storedData.map((item) => (
