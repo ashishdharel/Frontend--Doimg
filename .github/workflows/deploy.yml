@@ -96,5 +96,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT}}
           script: |
-            sud docker pull 654654282708.dkr.ecr.ap-southeast-1.amazonaws.com/frontendapp:latest
+            sudo docker pull 654654282708.dkr.ecr.ap-southeast-1.amazonaws.com/frontendapp:latest
 
