@@ -49,7 +49,7 @@ name: Build, publish, and deploy Backend Docker image to EC2
 on:
   push:
     branches:
-      - master
+      - main
     tags:
       - 'v*.*.*'
 
