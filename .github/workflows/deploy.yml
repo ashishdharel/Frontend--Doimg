@@ -39,7 +39,7 @@
 #             sudo docker stop frontend || true
 #             sudo docker rm frontend || true
 #             sudo docker run -d --name frontend -p 3000:80 ashishdharel/frontend:latest
-#             echo "It is completed a succesfully"
+#             echo "It is completed a succesfully yes"
 
 
 
